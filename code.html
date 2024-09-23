@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Delivered</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+            background-color: #4d77ae;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .input-row {
+            display: flex;
+            justify-content: flex-start; 
+            gap: 5px; 
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .input-container select,
+        .input-container input {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin: 0;
+            width: auto; 
+        }
+
+        #orders-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+      .card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        margin: 10px;
+        width: 250px;
+        text-align: center;
+      }
+
+      .card p {
+        margin: 5px 0;
+      }
+
+      .card strong {
+        font-weight: bold;
+      }
+
+      .divider {
+        margin: 10px 0;
+        border-top: 1px solid #ccc;
+      }
+
+      .submit-btn {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .submit-btn:hover {
+        background-color: #0056b3;
+      }
+
+      .date-id-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .date-id-container strong {
+        margin: 0 10px;
+      }
+    </style>
+    <script type="module">
+      // Import the necessary Firebase SDK functions
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        onSnapshot,
+      } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyD2FaIhRnaezk3s_P614kzFcpwMoNFymwo",
+        authDomain: "delivered-fe351.firebaseapp.com",
+        projectId: "delivered-fe351",
+        storageBucket: "delivered-fe351.appspot.com",
+        messagingSenderId: "785251078704",
+        appId: "1:785251078704:web:07f2aa71e961dc024413f5",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+
+      // Initialize Firestore
+      const db = getFirestore(app);
+
+      // Function to add new order to Firestore
+      async function addOrder() {
+        const delivered = document.getElementById("delivered").value;
+        const company = document.getElementById("company").value;
+        const date = document.getElementById("date").value;
+        const orderNumber = document.getElementById("orderNumber").value;
+
+        try {
+          await addDoc(collection(db, "orders"), {
+            delivered: delivered,
+            companyName: company,
+            date: date,
+            gerome: "Gérôme Détails ici", // Added Gérôme
+            orderDetails: "Détails de la commande", // Added order details
+            orderNumber: orderNumber,
+            amountToPay: "Espèce à la livraison",
+            price: 120,
+          });
+          alert("Commande ajoutée avec succès");
+        } catch (error) {
+          console.error("Error adding order: ", error);
+        }
+      }
+
+      // Function to format timestamp
+      function formatTimestamp(timestamp) {
+        const date = new Date(timestamp.seconds * 1000);
+        return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+      }
+
+      // Function to display orders in the UI
+      function displayOrders(orders) {
+        const ordersContainer = document.getElementById("orders-container");
+        ordersContainer.innerHTML = ""; // Clear previous content
+
+        orders.forEach((doc) => {
+          const order = doc.data();
+
+          // Create card element
+          const card = document.createElement("div");
+          card.classList.add("card");
+
+          // Add order details inside the card
+          card.innerHTML = `
+                    <div class="date-id-container">
+                        <strong>${doc.id}</strong> 
+                        <strong>${formatTimestamp(order.date)}</strong> 
+                    </div>
+                    <div class="divider"></div> 
+                    <p><strong>${order.companyName}</strong></p> 
+                    <p>${order.gerome}</p> 
+                    <div class="divider"></div> 
+                    <p>${order.orderDetails}</p> 
+                    <div class="divider"></div>
+                    <p><strong>Amount to Pay:</strong></p>
+                    <p>${order.amountToPay}</p> 
+                    <p>${order.price}€</p> 
+                `;
+
+          // Append card to the container
+          ordersContainer.appendChild(card);
+        });
+      }
+
+      // Firestore listener to get real-time updates
+      function listenToOrders() {
+        const ordersCollection = collection(db, "orders");
+
+        // Use onSnapshot to listen to real-time updates
+        onSnapshot(ordersCollection, (snapshot) => {
+          const orders = snapshot.docs; // Get all documents
+          displayOrders(orders); // Display orders in the UI
+        });
+      }
+
+      // Call the function to listen to real-time updates when the page loads
+      window.onload = listenToOrders;
+    </script>
+  </head>
+  <body>
+    <!-- Form to add new order -->
+    <div class="input-row">
+        <div class="input-container">
+            <select id="delivered">
+                <option value="Delivered A">Delivered </option>
+                <option value="Delivered B">Delivered 1</option>
+                <option value="Delivered C">Delivered 2</option>
+            </select>
+        </div>
+
+        <div class="input-container">
+            
+            <select id="company">
+                <option value="Company A">Company </option>
+                <option value="Company B">Company 1</option>
+                <option value="Company C">Company 2</option>
+            </select>
+        </div>
+
+        <div class="input-container">
+            <input type="date" id="date" />
+        </div>
+
+        <div class="input-container">
+            <input type="number" id="orderNumber" placeholder="Order Number" />
+        </div>
+    </div>
+
+    <!-- Container for displaying orders -->
+    <div id="orders-container">
+        <!-- Orders will be displayed here -->
+    </div>
+</body>
+</html>
