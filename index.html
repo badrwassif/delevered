@@ -81,10 +81,22 @@
       .date-id-container strong {
         margin: 0 10px;
       }
+      .btn{
+        background-color: #222;
+        color: #fff;
+        width: 50px;
+        padding: 2px;
+        border-radius: 10px;
+      }
+
+      .btn:hover{
+        background-color: #888;
+      }
+
     </style>
   </head>
   <body>
-    <div class="input-row">
+    <!-- <div class="input-row">
       <div class="input-container">
         <select id="delivered">
           <option value="Delivered A">Delivered</option>
@@ -110,7 +122,7 @@
       </div>
       
       
-    </div>
+    </div> -->
 
     <div id="orders-container"></div>
     
@@ -215,6 +227,7 @@ function displayOrders(orders) {
 
     // Create a button for updating the status
     const button = document.createElement("button");
+    button.classList.add("btn");
     button.textContent = order.statue ? order.statue : '0';
     button.onclick = () => updateStatue(doc.id, order.statue || 0); // Ensure this function is only called on click
 
@@ -228,7 +241,11 @@ function displayOrders(orders) {
 
         onSnapshot(ordersCollection, (snapshot) => {
           const orders = snapshot.docs;
-          console.log(orders)
+          const sortedOrders = orders.sort((a, b) => {
+            const dateA = a.data().date.seconds;
+            const dateB = b.data().date.seconds;
+            return dateB - dateA;
+          });
           displayOrders(orders);
         });
       }
