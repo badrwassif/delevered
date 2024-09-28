@@ -93,6 +93,100 @@
         background-color: #888;
       }
 
+      .pop-up-container{
+        position: fixed;
+        margin: -28px;
+        width: 100vw;
+        height: 100vh;
+        background-color: #8c8c8c70;
+      }
+
+      .pop-up{
+        width: 40%;
+        height: 60vh;
+        background-color: #fff;
+        margin: auto;
+        margin-top: 20vh;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+      }
+
+      .part{
+        height: 30px;
+        display: flex;
+        align-items: center;
+      }
+      .data{
+        font-weight: 700;
+      }
+      .title{
+        color: #444;
+        font-size: 12px;
+      }
+
+      #id-part{
+        justify-content: space-around;
+        width: 100%;
+        background-color: #e3e3e3;
+        border-radius: 5px;
+        color: #222;
+      }
+
+      #order-part{
+        justify-content: space-between;
+        background-color: #e3e3e3;
+        border-radius: 5px;
+        color: #222;
+        padding: 5px;
+      }
+
+      .pop-up-body{
+        width: 97%;
+        margin: auto;
+        height: 45vh;
+        
+      }
+
+      .pop-up-footer{
+        width: 100%;
+        height: 10vh;
+        background-color: #e3e3e3;
+        border-radius: 0 0 10px 10px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+      }
+
+      .btn-delivered{
+        width: 40%;
+        color: #fff;
+        background-color: blue;
+        border: none;
+        border-radius: 5px;
+        padding: 5px;
+      }
+
+      .btn-delivered:hover{
+        box-shadow: blue 0 0 5px 2px;
+        border: #fff solid 1px;
+      }
+
+      .btn-cancel{
+        width: 40%;
+        color: #fff;
+        background-color: red;
+        border: none;
+        border-radius: 5px;
+        padding: 5px;
+      }
+
+      .btn-cancel:hover{
+        box-shadow: red 0 0 5px 2px;
+        border: #fff solid 1px;
+      }
+
     </style>
   </head>
   <body>
@@ -125,6 +219,11 @@
     </div> -->
 
     <div id="orders-container"></div>
+    
+    
+    <!-- <div class="pop-up-container">
+          <div class="pop-up"></div>
+    </div> -->
     
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
@@ -185,22 +284,100 @@ function displayOrders(orders) {
   ordersContainer.innerHTML = "";
 
   async function updateStatue(id, statue) {
-    const orderDocRef = doc(db, "orders", id);
-    if (statue == 4) {
-      return;
-    } else {
-      try {
-        await updateDoc(orderDocRef, {
-          delivered: true,
-          statue: statue + 1,
-          color: statue == 0 ? '#eaff03' : statue == 1 ? '#3bd000' : statue == 2 ? '#008bcb' : '#ff5106'
-        });
-        // alert("Commande mise à jour avec succès");
-      } catch (error) {
-        console.log(error);
+  const orderDocRef = doc(db, "orders", id);
+  const popupContainer = document.querySelector(".pop-up-container");
+  
+  if (statue == 4) {
+    return;
+  } else {
+    try {
+      await updateDoc(orderDocRef, {
+        delivered: true,
+        statue: statue + 1,
+        color: statue == 0 ? '#eaff03' : statue == 1 ? '#3bd000' : statue == 2 ? '#008bcb' : '#ff5106'
+      });
+      // Update successful, now close the popup
+      if (popupContainer) {
+        document.body.removeChild(popupContainer);
       }
+    } catch (error) {
+      console.log(error);
     }
   }
+}
+
+function showPopUp(order, id) {
+  // Create the popup container
+  const popupContainer = document.createElement("div");
+  popupContainer.classList.add("pop-up-container");
+
+  // Create the popup content
+  const popup = document.createElement("div");
+  popup.classList.add("pop-up");
+
+  // Add order details inside the popup
+  popup.innerHTML = `
+    <div class='pop-up-body'>
+      <div id='id-part' class="part">
+        <p class='data'>#${id}</p> 
+        <p class='data'>${formatTimestamp(order.date)}</p> 
+      </div>
+      <div class='part'>
+        <p class="title">Company:</p>
+        <p class="data">${order.companyName}</p>
+      </div> 
+      <div class='part'>
+        <p class="title">Employee:</p>
+        <p class="data">${order.gerome}</p>
+      </div> 
+      <div class='part'>
+        <p class="title">Amount to Pay:</p>
+        <p class="data">${order.amountToPay}</p>
+      </div> 
+      <hr>
+      <div id='order-part' class='part'>
+        <p class="title">1</p>
+        <p class="data">${order.orderDetails}</p> 
+      </div> 
+      <hr> 
+      <div class='part'>
+        <p class="title">Price:</p>
+        <p class="data">${order.price}€</p>
+      </div>
+    </div>
+    <div class='pop-up-footer'>
+      <button id="btn-cancel" class="btn-cancel">Cancel Order</button>
+      <button id="btn-delivered" class="btn-delivered">Mark as Delivered</button>
+    </div>
+  `;
+
+  // Append the popup to the container
+  popupContainer.appendChild(popup);
+
+  // Append the popup container to the body
+  document.body.appendChild(popupContainer);
+
+  // Close the popup on clicking outside
+  popupContainer.addEventListener("click", function() {
+    document.body.removeChild(popupContainer);
+  });
+
+  // Prevent closing the popup when clicking inside it
+  popup.addEventListener("click", function(event) {
+    event.stopPropagation();
+  });
+
+  // Add event listener to the "Mark as Delivered" button
+  const btnDelivered = document.getElementById("btn-delivered");
+  btnDelivered.addEventListener("click", function() {
+    updateStatue(id, order.statue || 0);
+  });
+  const cancel = document.getElementById("btn-cancel");
+  cancel.addEventListener("click", function() {
+    document.body.removeChild(popupContainer);
+  });
+}
+
 
   orders.forEach((doc) => {
     const order = doc.data(); // Extract the data from the document
@@ -208,6 +385,7 @@ function displayOrders(orders) {
     const card = document.createElement("div");
     card.classList.add("card");
     card.style.backgroundColor = order.statue && order.color || '#fff';
+    card.onclick = () => showPopUp(order, doc.id);
 
     card.innerHTML = `
       <div class="date-id-container">
