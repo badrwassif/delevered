@@ -44,7 +44,7 @@ async function sendOTP(phoneNumber) {
     return await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
 }
 
-// Form submission handling
+// Form submission handling firebase
 document.getElementById('signup-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     
