@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGN UP</title>
+    <link rel="stylesheet" href="regester.css">
+</head>
+<body>
+    <form class="regester-container" id="signup-form">
+        <div class="full-name-container">
+            <label for="full-name">Full Name</label>
+            <input type="text" name="full-name" id="full-name" placeholder="full name..." required>
+        </div>
+        <div class="phone-number-container">
+            <label for="phone-number">Phone Number</label>
+            <div>
+                <select name="phone-number" id="code" required>
+                    <option value="000">+00</option>
+                </select>
+                <input type="number" name="phone-number" id="phone-number" placeholder="phone number..." required>
+            </div>
+        </div>
+        <div class="password-container">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" placeholder="password..." required>
+        </div>
+        <div class="confirm-password-container">
+            <label for="confirm-password">Confirm Password</label>
+            <input type="password" name="confirm-password" id="confirm-password" placeholder="confirm password..." required>
+        </div>
+        <div id="otp-container" style="display: none;">
+            <label for="otp">Enter OTP</label>
+            <input type="text" name="otp" id="otp" placeholder="OTP...">
+        </div>
+        <div class="btn-container">
+            <button type="submit" id="signup-button">Signup</button>
+        </div>
+        <div id="recaptcha-container"></div>
+        <span>You have an account? <a href="signin.html">Signin</a></span>
+    </form>
+    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-auth-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBIwOxG_ef7A2Xip8AsWUZ8IoZV8VBpLvM",
+            authDomain: "lunchproapp.firebaseapp.com",
+            projectId: "lunchproapp",
+            storageBucket: "lunchproapp.appspot.com",
+            messagingSenderId: "152392983898",
+            appId: "1:152392983898:web:c984aaa9045dbb47ffbf63",
+            measurementId: "G-0Z5YR2M39W"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        render();
+        function render() {
+            window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
+            recaptchaVerifier.render();
+        }
+    </script>
+    <script src="signup.js" type="module"></script>
+</body>
+</html>

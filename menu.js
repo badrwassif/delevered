@@ -8,10 +8,7 @@ import {
     updateDoc
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
-
-
-
-
+console.log('the null is: ', typeof null)
 const title = document.getElementById('menu-title');
 const urlParams = new URLSearchParams(window.location.search);
 const ID = urlParams.get('id');
@@ -97,15 +94,15 @@ function renderCart() {
 }
 
 window.document.getElementById("confirm-order").addEventListener("click",async () => {
-    await addOrder();
     if (cart.length === 0) {
         alert("Your cart is empty.");
     } else {
+        await addOrder();
         alert("Order confirmed!");
         quantitys.forEach((item) => {
-            item.innerHTML = 1
+            item.innerHTML = 1;
         })
-        cart = []; // Clear cart after confirmation
+        cart = [];
         renderCart();
     }
 });
@@ -114,6 +111,7 @@ async function addOrder() {
     const date = new Date();
     try {
         await addDoc(collection(db, "orders"), {
+            // id: ,
             companyName: TITLE,
             date: date,
             gerome: "badr",
@@ -127,8 +125,6 @@ async function addOrder() {
     }
 }
 
-
-
 function listenToOrders() {
     const ordersCollection = collection(db, "restorants");
 
@@ -139,7 +135,6 @@ function listenToOrders() {
             if(item.id == ID){
                 restorant = resto;
             }
-            
         })
         console.log(restorant)
     });
