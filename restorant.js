@@ -2,6 +2,25 @@ import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13
 import { db } from "./firebase.js";
 
 
+// let is_sign_in = localStorage.getItem('is_sign_in');
+
+// if (is_sign_in === null || is_sign_in === 'false') {
+//   window.location.href = 'index.html';
+// } else {
+//   alert('User is signed in');
+// }
+
+// Function to set 'is_sign_in' in localStorage when user signs in
+// function signIn() {
+//   localStorage.setItem('is_sign_in', 'true');
+// }
+
+// Function to set 'is_sign_in' to false when user signs out
+// function signOut() {
+//   localStorage.setItem('is_sign_in', 'false');
+// }
+
+
 function displayRestorants(restorants) {
   const restorantsContainer = document.getElementById("restorants-container");
   restorantsContainer.innerHTML = "";

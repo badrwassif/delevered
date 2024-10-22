@@ -9,7 +9,8 @@ const firebaseConfig = {
     storageBucket: "delivered-fe351.appspot.com",
     messagingSenderId: "785251078704",
     appId: "1:785251078704:web:07f2aa71e961dc024413f5"
-};
+  };
+
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
