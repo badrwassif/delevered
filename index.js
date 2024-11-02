@@ -2,7 +2,8 @@ import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13
 import { db } from "./firebase.js";
 
 
-// let is_sign_in = localStorage.getItem('is_sign_in');
+let is_sign_in = localStorage.getItem('is_sign_in');
+console.log(is_sign_in)
 
 // if (is_sign_in === null || is_sign_in === 'false') {
 //   window.location.href = 'index.html';
@@ -23,13 +24,15 @@ import { db } from "./firebase.js";
 
 function displayRestorants(restorants) {
   const restorantsContainer = document.getElementById("restorants-container");
-  restorantsContainer.innerHTML = "";
 
   restorants.forEach((item) => {
     const restorant = item.data();  // Get restaurant data from document
-
-    const Restorant = document.createElement("a");
-    Restorant.innerHTML= restorant.restorant;
+    console.log(item.id,'restorant: ',restorant.restorant)
+    const Restorant = document.createElement("div");
+    Restorant.innerHTML= `
+      <img src="${restorant.urlimg}" alt="image">
+      <a href="menu.html?id=${encodeURIComponent(item.id)}&title=${encodeURIComponent(restorant.restorant)}">${restorant.restorant}</a>
+    `;
     Restorant.href = `menu.html?id=${encodeURIComponent(item.id)}&title=${encodeURIComponent(restorant.restorant)}`
 
     restorantsContainer.appendChild(Restorant);
